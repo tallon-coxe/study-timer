@@ -7,7 +7,7 @@ sg.theme('GreenTan')   # Add a touch of color
 layout = [[sg.Text('How long would you like to study?', size=(25, 1), auto_size_text=False, justification='right')],
           [sg.Slider(range=(0, 120), resolution=10, border_width=2, default_value=0, size=(20,15), orientation='horizontal', font=('Helvetica', 12), tick_interval=30, enable_events=True)],
           [sg.Button('Start'), sg.Button('Pause'), sg.Button('Reset')],
-          [sg.Image(r'C:\Users\Tallon\PycharmProjects\pythonProject1\study.png', tooltip='penis')],
+          [sg.Image(r'C:\Users\Tallon\PycharmProjects\pythonProject1\study.png', tooltip='test')],
 
 
         ]
