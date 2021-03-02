@@ -7,10 +7,10 @@ from pygame import mixer
 #
 # FIXED... starting the timer at 0 will crash the app ... FIXED
 # FIXED.... you're unable to move the slider even after the timer runs out
-# cant play lofi music after timer has started
 # the window doesn't properly close until the timer runs out
 # pressing any buttons while the timer is working will accelerate the timer
 # cant play lofi after starting the timer; cant do anything after playing lofi
+# pause button doesn't work
 # --------------------
 
 # Define the window's contents
@@ -28,8 +28,8 @@ layout = [[sg.Text('How long would you like to study?', size=(34, 1), font=("Hel
           [sg.Text('0:00', size=(30,1), font=("Helvetica", 20), auto_size_text=True, justification='right', key='timer')],
           [sg.Slider(resolution=5, range=(0, 120), border_width=2, default_value=val, size=(20,15), orientation='horizontal', font=('Helvetica', 12), tick_interval=30, enable_events=True, key='Slider')],
           [sg.Button('Start', key='Start', enable_events=True), 
-          sg.Button('Reset',key='Reset'),
-          sg.Button('pause music', key='pause')],
+          sg.Button('Reset',key='Reset', enable_events=True),
+          sg.Button('pause music', key='Pause')],
           [sg.Image(r'/Users/talloncoxe/.spyder-py3/studytimer/study.png', tooltip='test')],
 
         ]
@@ -48,7 +48,6 @@ while True:
     # This is the code that reads and updates your window
     event, values = window.read()
     slider_val = values['Slider']
-    
     
     # ---- Countdown timer ----
     def countdown(p,q):
@@ -70,11 +69,21 @@ while True:
             if(i==0 and j==-1):
                 break
         if(i==0 and j==-1):
-            window['timer'].update("Goodbye!")
+            window['timer'].update("Timer is over!")
             window['Slider'].Update(disabled=False)
             window.read(timeout=1000)
             window.refresh()
-            pass
+            
+        #if event in (sg.Button, 'Reset'):
+         #   window['timer'].update(countdown(val, val))
+          #  pass
+     
+ #   def timer_is_running():
+        
+    
+    # RESET BUTTON
+#    if event in (sg.Button, 'Reset'):
+ #       window['timer'].update(countdown(val, val))
     
     
     if event == "Slider":
@@ -90,16 +99,18 @@ while True:
         
     #if slider_val >= int(30):
        # window['Slider'].Update(resolution)
-            
+       
+       
+      
+    # START BUTTON
     if event in (sg.Button, 'Start'):
         if pg.mixer.music.get_busy() == False:
             pg.mixer.music.play()
+            window['timer'].update(countdown)
             pass
-        elif pg.mixer.music.get_busy() == True:
-            if event in (sg.Button, 'pause'):
-                pg.mixer.pause
-                window.refresh()
-        pass
+                    
+            
+        # DISABLE THE SLIDER AFTER STARTING THE COUNTDOWN
         if countdown == int(0):
             window['Start'].Update(disabled=True)
         else:
@@ -108,6 +119,21 @@ while True:
             countdown(int(slider_val), 0)
             window.refresh()
             pass
+       
+    #PAUSE BUTTON
+    if event in (sg.Button, 'Pause'):
+        if pg.mixer.music.get_busy() == True:
+            pg.mixer.music.pause()
+            pass
+        
+       #     pass
+        
+            
+        
+        #elif pg.mixer.music.get_busy() == True:
+         #   if event in (sg.Button, 'pause'):
+          #      pg.mixer.pause
+           #     window.refresh()
 
 
     if event == sg.WIN_CLOSED or event == 'Quit':
