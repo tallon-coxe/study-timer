@@ -1,10 +1,11 @@
 import PySimpleGUI as sg
 import pygame as pg
 from pygame import mixer
+import sys
+import os
 
 # --------------------
 # CURRENT BUGS
-#
 # FIXED... starting the timer at 0 will crash the app ... FIXED
 # FIXED.... you're unable to move the slider even after the timer runs out
 # the window doesn't properly close until the timer runs out
@@ -14,13 +15,11 @@ from pygame import mixer
 # --------------------
 
 # Define the window's contents
-
-sg.theme('GreenTan')   # Add a touch of color
-
+sg.theme('GreenTan')
 val=0
 start = False
 pg.mixer.init()
-pg.mixer.music.load('burnmarks.wav')
+#pg.mixer.music.load('burnmarks.wav')
 
 global layout
 
@@ -30,8 +29,7 @@ layout = [[sg.Text('How long would you like to study?', size=(34, 1), font=("Hel
           [sg.Button('Start', key='Start', enable_events=True), 
           sg.Button('Reset',key='Reset', enable_events=True),
           sg.Button('pause music', key='Pause')],
-          [sg.Image(r'/Users/talloncoxe/.spyder-py3/studytimer/study.png', tooltip='test')],
-
+          [sg.Image(r'~/Documents/study_timer/study-timer/assets/study.png', tooltip='test')],
         ]
 
 
@@ -39,107 +37,80 @@ layout = [[sg.Text('How long would you like to study?', size=(34, 1), font=("Hel
 
 global window
 window = sg.Window('lofi study timer', layout)
-
-slider = window['Slider']
-
+running = False
+time_format = "00:00"
 
 # Display and interact with the Window using an Event Loop
 while True:
+
     # This is the code that reads and updates your window
-    event, values = window.read()
+    event, values = window.read(timeout=1000)
     slider_val = values['Slider']
+
+    # Define the countdown timer components
+    if event == "Start":
+        minutes = slider_val
+        sec = int(minutes * 60)
+        minn, secc = divmod(sec, 60)
+        time_format = "{:02d}:{:02d}".format(minn, secc)
+
+    if event in (sg.Button, 'Reset'):
+        running = False
+        sec = int(minutes * 60)
+        minn, secc = divmod(sec, 60)
+        time_format = "{:02d}:{:02d}".format(minn, secc)
+        window["timer"].update(time_format)
+        window["Start"].update("Start")
+        window["Reset"].update(disabled=True)
+        window['Slider'].Update(disabled=False)
+
+
+
+    if event == sg.WIN_CLOSED or event == "Cancel":
+        break
     
     # ---- Countdown timer ----
-    def countdown(p,q):
-        i=p
-        j=q
-        k=0
-        while True:
-            if(j==-1):
-                j=59
-                i -=1
-            if(j > 9):  
-                window['timer'].update(str(i)+":"+str(j))
-            else:
-                window['timer'].update(str(i)+":"+str(k)+str(j))
-            window.read(timeout=1000)
-            window.refresh()
-            #time.sleep(1) <--- using time.sleep is bad, using timeout(milliseconds) instead
-            j -= 1
-            if(i==0 and j==-1):
-                break
-        if(i==0 and j==-1):
-            window['timer'].update("Timer is over!")
-            window['Slider'].Update(disabled=False)
-            window.read(timeout=1000)
-            window.refresh()
-            
-        #if event in (sg.Button, 'Reset'):
-         #   window['timer'].update(countdown(val, val))
-          #  pass
-     
- #   def timer_is_running():
-        
-    
-    # RESET BUTTON
-#    if event in (sg.Button, 'Reset'):
- #       window['timer'].update(countdown(val, val))
-    
-    
-    if event == "Slider":
-        slider_val = values['Slider']
-        #resolution = window['Slider']
+
+    if event in 'Slider':
         print(int(slider_val))
         window.refresh()
-        #if int(slider_val) > 30:
-         #   window['Slider'].Update(sg.Slider(resolution + 5))       
         pass
-        #elif 30 <= int(slider_val) <=120:
-         #   window['Slider'].Update(slider_val - 10)
-        
-    #if slider_val >= int(30):
-       # window['Slider'].Update(resolution)
-       
-       
-      
-    # START BUTTON
+
+
+    if time_format == "00:00":
+        running = False
+
+
+    #def reset_button():
+     #   window['Slider'].Update(disabled=False) # Reenable the slider after reset has been pressed.
+      #  window['Start'].Update(disabled=False) # Reenable the start button.
+       ##window.refresh()
+
+
+    if running is True:
+        minutes = int(slider_val)
+        minn, secc = divmod(sec, 60)
+        time_format = "{:02d}:{:02d}".format(minn, secc)
+        window["timer"].update(time_format)
+        window["Reset"].update(disabled=False)
+        sec -= 1
+
+
     if event in (sg.Button, 'Start'):
-        if pg.mixer.music.get_busy() == False:
-            pg.mixer.music.play()
-            window['timer'].update(countdown)
-            pass
-                    
-            
-        # DISABLE THE SLIDER AFTER STARTING THE COUNTDOWN
-        if countdown == int(0):
-            window['Start'].Update(disabled=True)
+
+        minutes = int(slider_val)
+        
+        if running:             
+            running = False
+            minutes = int(slider_val)
+            window["Start"].update("Start")
+
         else:
-            window['Slider'].Update(disabled=True)
-            window['timer'].update(countdown)
-            countdown(int(slider_val), 0)
-            window.refresh()
-            pass
-       
-    #PAUSE BUTTON
-    if event in (sg.Button, 'Pause'):
-        if pg.mixer.music.get_busy() == True:
-            pg.mixer.music.pause()
-            pass
+            running = True
+            window['Start'].update("Pause") # Change the 'Start' button to say 'Pause'
+            window['Slider'].Update(disabled=True) # Disable the slider after start has been pressed.
         
-       #     pass
-        
-            
-        
-        #elif pg.mixer.music.get_busy() == True:
-         #   if event in (sg.Button, 'pause'):
-          #      pg.mixer.pause
-           #     window.refresh()
+        window.refresh()
 
 
-    if event == sg.WIN_CLOSED or event == 'Quit':
-        break
-
-# Finish up by removing from the screen
-window.close()   # Close the Window
-
-# this is not an exit
+window.close()         
