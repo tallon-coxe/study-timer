@@ -21,8 +21,6 @@ start = False
 pg.mixer.init()
 #pg.mixer.music.load('burnmarks.wav')
 
-global layout
-
 layout = [[sg.Text('How long would you like to study?', size=(34, 1), font=("Helvetica", 20), auto_size_text=True, justification='right')],
           [sg.Text('0:00', size=(30,1), font=("Helvetica", 20), auto_size_text=True, justification='right', key='timer')],
           [sg.Slider(resolution=5, range=(0, 120), border_width=2, default_value=val, size=(20,15), orientation='horizontal', font=('Helvetica', 12), tick_interval=30, enable_events=True, key='Slider')],
@@ -35,7 +33,6 @@ layout = [[sg.Text('How long would you like to study?', size=(34, 1), font=("Hel
 
 # Create the window
 
-global window
 window = sg.Window('lofi study timer', layout)
 running = False
 time_format = "00:00"
