@@ -4,16 +4,6 @@ from pygame import mixer
 import sys
 import os
 
-# --------------------
-# CURRENT BUGS
-# FIXED... starting the timer at 0 will crash the app ... FIXED
-# FIXED.... you're unable to move the slider even after the timer runs out
-# the window doesn't properly close until the timer runs out
-# pressing any buttons while the timer is working will accelerate the timer
-# cant play lofi after starting the timer; cant do anything after playing lofi
-# pause button doesn't work
-# --------------------
-
 # Define the window's contents
 sg.theme('GreenTan')
 val=0
@@ -21,18 +11,20 @@ start = False
 pg.mixer.init()
 #pg.mixer.music.load('burnmarks.wav')
 
-layout = [[sg.Text('How long would you like to study?', size=(34, 1), font=("Helvetica", 20), auto_size_text=True, justification='right')],
-          [sg.Text('0:00', size=(30,1), font=("Helvetica", 20), auto_size_text=True, justification='right', key='timer')],
-          [sg.Slider(resolution=5, range=(0, 120), border_width=2, default_value=val, size=(20,15), orientation='horizontal', font=('Helvetica', 12), tick_interval=30, enable_events=True, key='Slider')],
+global layout
+
+layout = [[sg.Text('How long would you like to study?', size=(34, 1), font=("Helvetica", 18), auto_size_text=True, justification='right')],
+          [sg.Slider(resolution=5, range=(0, 120), border_width=2, default_value=val, size=(20,15), orientation='horizontal', font=('Helvetica', 12), tick_interval=30, enable_events=True, key='Slider'), sg.Text('0:00', size=(10,0), font=("Helvetica", 20), auto_size_text=True, justification='right', key='timer')],
           [sg.Button('Start', key='Start', enable_events=True), 
           sg.Button('Reset',key='Reset', enable_events=True),
-          sg.Button('pause music', key='Pause')],
+          sg.Button('Pause music', key='Pause')],
           [sg.Image(r'~/Documents/study_timer/study-timer/assets/study.png', tooltip='test')],
         ]
 
 
 # Create the window
 
+global window
 window = sg.Window('lofi study timer', layout)
 running = False
 time_format = "00:00"
@@ -78,12 +70,6 @@ while True:
         running = False
 
 
-    #def reset_button():
-     #   window['Slider'].Update(disabled=False) # Reenable the slider after reset has been pressed.
-      #  window['Start'].Update(disabled=False) # Reenable the start button.
-       ##window.refresh()
-
-
     if running is True:
         minutes = int(slider_val)
         minn, secc = divmod(sec, 60)
@@ -110,4 +96,6 @@ while True:
         window.refresh()
 
 
-window.close()         
+window.close()
+    
+# this is not an exit           
