@@ -1,4 +1,4 @@
 # study-timer
 Simple timer for studying. Work in progress.
 
-![Screenshot from 2021-04-14 20-46-29](https://user-images.githubusercontent.com/73142794/114802047-9a89a580-9d62-11eb-8b18-b2dfc75f5755.png)
+![Screenshot from 2021-05-11 15-37-47](https://user-images.githubusercontent.com/73142794/117881561-fd416480-b26e-11eb-9dff-5bd4d21deab0.png)
